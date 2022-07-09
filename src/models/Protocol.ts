@@ -16,13 +16,46 @@ export namespace ProtocolMapping {
     initialize: {
       paramsType: []
       returnType: {
-        frameId: string
+        id: string
       }
     }
     close: {
       paramsType: [
         {
-          frameId: string
+          id: string
+        }
+      ]
+      returnType: void
+    }
+    navigate: {
+      paramsType: [
+        {
+          id: string
+          url: string
+        }
+      ]
+      returnType: void
+    }
+    back: {
+      paramsType: [
+        {
+          id: string
+        }
+      ]
+      returnType: void
+    }
+    forward: {
+      paramsType: [
+        {
+          id: string
+        }
+      ]
+      returnType: void
+    }
+    reload: {
+      paramsType: [
+        {
+          id: string
         }
       ]
       returnType: void
@@ -30,7 +63,7 @@ export namespace ProtocolMapping {
     setViewport: {
       paramsType: [
         {
-          frameId: string
+          id: string
         } & Protocol.Viewport
       ]
       returnType: boolean

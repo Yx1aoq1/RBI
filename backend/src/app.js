@@ -5,7 +5,6 @@ import puppeteer from 'puppeteer'
 import { createServer } from 'http'
 import api from './api.js'
 import websocket from './ws.js'
-import BrowserManager from './browser.js'
 
 const CONFIG = {
   hostname: '127.0.0.1',
@@ -18,7 +17,6 @@ const start = async () => {
     browserURL: `http://${CONFIG.hostname}:${CONFIG.chrome_port}`,
   })
   console.log(browser.wsEndpoint())
-  const browserManager = new BrowserManager(browser)
   const app = Express()
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({ extended: false }))
@@ -29,11 +27,11 @@ const start = async () => {
     })
   ) // 设置跨域
 
-  app.use('/api', api(browserManager))
+  app.use('/api', api(browser))
 
   const server = createServer(app)
 
-  websocket(server, browserManager)
+  websocket(server, browser)
 
   server.listen(CONFIG.server_port, function (err) {
     if (err) {

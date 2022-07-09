@@ -31,6 +31,13 @@ function resize(elem: HTMLElement): void {
   browserWindowWidth = elem.offsetWidth
   browserWinodwHeight = elem.offsetHeight
   logger.info('resize', viewport.value)
+  page.resize(browserWindowWidth, browserWinodwHeight)
+}
+/**
+ * 页面刷新或关闭触发事件
+ */
+function close() {
+  page.close()
 }
 onMounted(async () => {
   if (browserWindowEl.value) {
@@ -44,24 +51,29 @@ onMounted(async () => {
     })
     logger.info('page', page)
   }
+  window.addEventListener('beforeunload', close)
 })
-onUnmounted(async () => {
-  page.close()
+onUnmounted(() => {
+  window.removeEventListener('beforeunload', close)
 })
 /** page init end */
 /** navigate bar start */
 const url = ref('')
 function navigate(url: string): void {
   logger.info('navigate', url)
+  page.navigate(url)
 }
 function back(): void {
   logger.info('back')
+  page.back()
 }
 function forward(): void {
   logger.info('forward')
+  page.forward()
 }
 function reload(): void {
   logger.info('reload')
+  page.reload()
 }
 /** navigate bar end */
 </script>

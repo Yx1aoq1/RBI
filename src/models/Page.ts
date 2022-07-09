@@ -20,20 +20,22 @@ export async function connectToPage(options: ConnectOptions): Promise<Page> {
     const connectionTransport: ConnectionTransport = await WebSocketClass.create(pageWsURL)
     connection = new Connection(pageWsURL, connectionTransport, slowMo)
   }
-  return Page._create(connection, defaultViewport)
+  const { id } = await connection.send('initialize')
+  return Page._create(id, connection, defaultViewport)
 }
 
 export class Page extends EventEmitter {
-  static async _create(connection: Connection, defaultViewport: Protocol.Viewport): Promise<Page> {
-    const page = new Page(connection, defaultViewport)
+  static async _create(id: string, connection: Connection, defaultViewport: Protocol.Viewport): Promise<Page> {
+    const page = new Page(id, connection, defaultViewport)
     await page.#initialize()
     return page
   }
+  id: string
   #client: Connection
   #viewport: Protocol.Viewport
-  frameId!: string
-  constructor(client: Connection, defaultViewport: Protocol.Viewport) {
+  constructor(id: string, client: Connection, defaultViewport: Protocol.Viewport) {
     super()
+    this.id = id
     this.#client = client
     this.#viewport = defaultViewport
   }
@@ -50,16 +52,12 @@ export class Page extends EventEmitter {
   }
 
   async #initialize(): Promise<void> {
-    // 初始化窗口大小
-    // 获取当前页面的DOM数据
-    const { frameId } = await this.#client.send('initialize')
-    this.frameId = frameId
     await Promise.all([this.setViewport(this.#viewport)])
   }
 
   async setViewport(viewport: { width: number; height: number }): Promise<boolean> {
     const needsReload = await this.#client.send('setViewport', {
-      frameId: this.frameId,
+      id: this.id,
       width: viewport.width,
       height: viewport.height,
       isMobile: this.isMobile(),
@@ -70,7 +68,28 @@ export class Page extends EventEmitter {
   }
 
   close(): void {
-    if (!this.frameId) return
-    this.#client.send('close', { frameId: this.frameId })
+    this.#client.send('close', { id: this.id })
+  }
+
+  navigate(url: string): void {
+    this.#client.send('navigate', { id: this.id, url })
+  }
+
+  back(): void {
+    this.#client.send('back', { id: this.id })
+  }
+
+  forward(): void {
+    this.#client.send('forward', { id: this.id })
+  }
+
+  reload(): void {
+    this.#client.send('reload', { id: this.id })
+  }
+
+  resize(width: number, height: number): void {
+    this.#viewport.width = width
+    this.#viewport.height = height
+    this.setViewport(this.#viewport)
   }
 }
