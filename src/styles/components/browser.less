@@ -1,0 +1,42 @@
+.browser {
+  flex: 1 1 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  &-navigation-bar {
+    height: 30px;
+    width: 100%;
+    display: flex;
+    padding: 4px 9px;
+
+    .navigation-bar-input {
+      height: 30px;
+      border: none;
+      flex: 1 1 0;
+      border-radius: 15px;
+      background: #f1f3f4;
+      padding: 2px 15px;
+      outline: none;
+      margin: 0 5px;
+    }
+    .navigation-bar-btns {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      &:hover {
+        background-color: #e8eaed;
+      }
+    }
+  }
+
+  &-window {
+    flex: 1 1 0;
+    position: relative;
+    overflow: hidden;
+  }
+}
