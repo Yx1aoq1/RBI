@@ -2,10 +2,10 @@ import Express from 'express'
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import puppeteer from 'puppeteer'
-import axios from 'axios'
 import { createServer } from 'http'
 import api from './api.js'
 import websocket from './ws.js'
+import BrowserManager from './browser.js'
 
 const CONFIG = {
   hostname: '127.0.0.1',
@@ -17,6 +17,8 @@ const start = async () => {
   const browser = await puppeteer.connect({
     browserURL: `http://${CONFIG.hostname}:${CONFIG.chrome_port}`,
   })
+  console.log(browser.wsEndpoint())
+  const browserManager = new BrowserManager(browser)
   const app = Express()
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({ extended: false }))
@@ -27,13 +29,13 @@ const start = async () => {
     })
   ) // 设置跨域
 
-  app.use('/api', api(browser))
+  app.use('/api', api(browserManager))
 
   const server = createServer(app)
 
-  websocket(server, browser)
+  websocket(server, browserManager)
 
-  server.listen(CONFIG.port, function (err) {
+  server.listen(CONFIG.server_port, function (err) {
     if (err) {
       console.error('err:', err)
     } else {

@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-
+import { CONSOLE_ENABLE } from '@/config'
 interface LogLevel {
   levelStyle: string
   dateStyle: string
@@ -53,6 +53,7 @@ class Logger {
   }
 
   print(level: LogLevel, msg: string, ...params: unknown[]) {
+    if (!CONSOLE_ENABLE) return
     if (level.level < this.useLevel.level) {
       return
     }

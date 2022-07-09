@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "dayjs": "^1.11.3",
+    "element-resize-detector": "^1.2.4",
+    "mitt": "^3.0.0",
     "vue": "^3.2.25"
   },
   "devDependencies": {
