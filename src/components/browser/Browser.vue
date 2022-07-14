@@ -1,6 +1,12 @@
 <template>
   <div class="browser">
-    <BrowserNavigationBar v-model="url" @navigate="navigate" @back="back" @forward="forward" @reload="reload" />
+    <BrowserNavigationBar
+      v-model="url"
+      @navigate="navigate"
+      @back="back"
+      @forward="forward"
+      @reload="reload"
+    />
     <div class="browser-window" ref="browserWindowEl"></div>
   </div>
 </template>
@@ -31,7 +37,7 @@ function resize(elem: HTMLElement): void {
   browserWindowWidth = elem.offsetWidth
   browserWinodwHeight = elem.offsetHeight
   logger.info('resize', viewport.value)
-  page.resize(browserWindowWidth, browserWinodwHeight)
+  page && page.resize(browserWindowWidth, browserWinodwHeight)
 }
 /**
  * 页面刷新或关闭触发事件
@@ -46,7 +52,7 @@ onMounted(async () => {
     // 监听窗口大小变化
     erd.listenTo(browserWindowEl.value, resize)
     page = await connectToPage({
-      pageWsURL: 'ws://localhost:9233/page',
+      pageWsURL: 'ws://localhost:9233',
       defaultViewport: viewport.value,
     })
     logger.info('page', page)
